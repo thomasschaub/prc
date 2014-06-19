@@ -6,6 +6,7 @@
 
 #include "note.h"
 #include "midi.h"
+#include "song.h"
 #include "view.h"
 
 void printMidiDevices() {
@@ -31,10 +32,17 @@ PmStream* getInputStream(PmDeviceID id) {
     return stream;
 }
 
-int main() {
+int main(int argc, const char* argv[]) {
+    if (argc != 2) {
+        std::cerr << "Usage: " << argv[0] << " <midi>" << std::endl;
+        return 1;
+    }
+    const char* songPath = argv[1];
+
     SDL_Init(SDL_INIT_VIDEO);
     //SDL_LogSetAllPriority(SDL_LOG_PRIORITY_DEBUG);
 
+    // Prepare user input
     std::array<Note, 128> activeNotes;
     for (unsigned char i = 0; i < 128; ++i) {
         Note& note = activeNotes[i];
@@ -48,8 +56,18 @@ int main() {
     printMidiDevices();
     PmStream* stream = getInputStream(5);
 
+    // Open song
+    std::vector<Note> song = loadSong(songPath);
+
     // Create output
     View view;
+
+    // Move song a few seconds into the future
+    auto songOffset = now(nullptr) + 1000;
+    for (auto& note: song) {
+        note.start += songOffset;
+        note.end += songOffset;
+    }
 
     bool run = true;
     while (run) {
@@ -69,11 +87,10 @@ int main() {
         //SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Time: %d\n", frameStart);
         view.setTime(frameStart);
 
-        // Read song
-        // TODO
-
         // Draw song
-        // TODO
+        for (const auto& note: song) {
+            view.draw(note);
+        }
 
         // Read user input
         NoteEvent noteEvents[8];
