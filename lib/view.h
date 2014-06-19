@@ -8,10 +8,12 @@ public:
 
     void setTime(unsigned t);
     void setWidth(unsigned dt);
+    void setCenter(float c);
 
     void draw(const Note& note);
 
 private:
     unsigned t = SDL_GetTicks();
     unsigned dt = 1000;
+    float center = .5;
 };

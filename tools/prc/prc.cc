@@ -63,6 +63,7 @@ int main() {
 
         // Update view time
         int frameStart = now(nullptr);
+        //SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Time: %d\n", frameStart);
         view.setTime(frameStart);
 
         // Read song
