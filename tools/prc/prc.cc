@@ -36,8 +36,10 @@ int main() {
     SDL_LogSetAllPriority(SDL_LOG_PRIORITY_DEBUG);
 
     std::array<Note, 128> activeNotes;
-    for (auto& note: activeNotes) {
+    for (unsigned char i = 0; i < 128; ++i) {
+        Note& note = activeNotes[i];
         note = {0};
+        note.note = i;
     }
     std::vector<Note> playedNotes;
 
