@@ -3,8 +3,10 @@
 #include <algorithm>
 #include <iostream>
 
-View::View() {
-    SDL_CreateWindowAndRenderer(width, height, 0, &window, &renderer);
+View::View(SDL_Renderer* renderer):
+    renderer(renderer)
+{
+    SDL_GetRendererOutputSize(renderer, &width, &height);
 }
 
 void View::setTime(unsigned v) {
@@ -27,8 +29,6 @@ void View::clear() {
 }
 
 void View::draw(const Note& note) {
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
-
     // Check if note is out of screen
     auto effectiveEnd = note.end == 0 ? t : note.end;
     bool leftOut = effectiveEnd < leftT;

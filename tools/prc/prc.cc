@@ -60,7 +60,10 @@ int main(int argc, const char* argv[]) {
     std::vector<Note> song = loadSong(songPath);
 
     // Create output
-    View view;
+    SDL_Window* window;
+    SDL_Renderer* renderer;
+    SDL_CreateWindowAndRenderer(800, 600, 0, &window, &renderer);
+    View view(renderer);
 
     // Move song a few seconds into the future
     auto songOffset = now(nullptr) + 1000;

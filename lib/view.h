@@ -4,7 +4,7 @@
 
 class View {
 public:
-    View();
+    View(SDL_Renderer* renderer);
 
     void setTime(unsigned t);
     void setWidth(unsigned dt);
@@ -17,7 +17,7 @@ public:
 private:
     int screenX(unsigned t);
 
-    unsigned width = 800, height = 600;
+    int width, height;
 
     SDL_Window* window;
     SDL_Renderer* renderer;
