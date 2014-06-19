@@ -80,6 +80,7 @@ int main() {
             switch (e.type) {
                 case ON:
                     note.start = e.time;
+                    note.end = 0;
                     break;
                 case OFF:
                     note.end = e.time;
