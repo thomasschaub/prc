@@ -61,7 +61,8 @@ int main() {
             }
         }
 
-        // Update view time
+        // Update view
+        view.clear();
         int frameStart = now(nullptr);
         //SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Time: %d\n", frameStart);
         view.setTime(frameStart);
@@ -102,13 +103,13 @@ int main() {
             view.draw(note);
         }
 
+        view.update();
+
         auto elapsed = now(nullptr) - frameStart;
         auto delay = 1000 / 60 - elapsed;
         if (delay > 0) {
             SDL_Delay(delay);
         }
-
-
     }
 
     Pm_Close(stream);

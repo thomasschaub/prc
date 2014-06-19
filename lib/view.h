@@ -10,10 +10,20 @@ public:
     void setWidth(unsigned dt);
     void setCenter(float c);
 
+    void clear();
     void draw(const Note& note);
+    void update();
 
 private:
-    unsigned t = SDL_GetTicks();
+    unsigned screenX(unsigned t);
+
+    unsigned width = 800, height = 600;
+
+    SDL_Window* window;
+    SDL_Renderer* renderer;
+
+    unsigned t = 0;
+    unsigned leftT = 0, rightT = 0;
     unsigned dt = 1000;
     float center = .5;
 };
