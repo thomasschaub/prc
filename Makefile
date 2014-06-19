@@ -2,7 +2,7 @@ BUILDDIR := build
 PREFIX := bin
 
 CXXFLAGS += -std=c++0x -Wall -Werror -Ilib
-LDFLAGS += -lportmidi `sdl2-config --libs`
+LDLIBS += -lportmidi -lportSMF `sdl2-config --libs`
 
 CXXFLAGS += -g -O0
 
@@ -10,6 +10,7 @@ LIBS := $(shell find lib -name "*.cc")
 OBJS := $(LIBS:%.cc=$(BUILDDIR)/%.o)
 
 include tools/prc/Makefile
+include tools/allegroTest/Makefile
 
 all: install
 
@@ -27,3 +28,5 @@ $(BUILDDIR)/%: %.cc $(OBJS)
 
 clean:
 	rm -rf $(BUILDDIR)
+
+.PRECIOUS: $(OBJS)
