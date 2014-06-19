@@ -91,6 +91,8 @@ int main(int argc, const char* argv[]) {
         view.setTime(frameStart);
 
         // Draw song
+        SDL_SetRenderDrawColor(renderer, 255, 127, 0, 255);
+        SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
         for (const auto& note: song) {
             view.draw(note);
         }
@@ -116,11 +118,14 @@ int main(int argc, const char* argv[]) {
         }
 
         // Draw user input
+        SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_ADD);
+        SDL_SetRenderDrawColor(renderer, 255, 128, 255, 255);
         for (auto& note: activeNotes) {
             if (note.start != 0) {
                 view.draw(note);
             }
         }
+        SDL_SetRenderDrawColor(renderer, 0, 128, 255, 255);
         for (auto& note: playedNotes) {
             view.draw(note);
         }
