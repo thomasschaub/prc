@@ -49,7 +49,18 @@ int main() {
     // Create output
     View view;
 
-    while (true) {
+    bool run = true;
+    while (run) {
+        // Check SDL events
+        SDL_Event e;
+        while (SDL_PollEvent(&e)) {
+            switch (e.type) {
+            case SDL_QUIT:
+                run = false;
+                break;
+            }
+        }
+
         // Update view time
         int frameStart = now(nullptr);
         view.setTime(frameStart);
