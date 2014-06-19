@@ -51,7 +51,8 @@ int main() {
 
     while (true) {
         // Update view time
-        view.setTime(now(nullptr));
+        int frameStart = now(nullptr);
+        view.setTime(frameStart);
 
         // Read song
         // TODO
@@ -87,6 +88,14 @@ int main() {
         for (auto& note: playedNotes) {
             view.draw(note);
         }
+
+        auto elapsed = now(nullptr) - frameStart;
+        auto delay = 1000 / 60 - elapsed;
+        if (delay > 0) {
+            SDL_Delay(delay);
+        }
+
+
     }
 
     Pm_Close(stream);
