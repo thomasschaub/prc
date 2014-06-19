@@ -37,13 +37,15 @@ void View::draw(const Note& note) {
         return;
     }
 
-    unsigned screenL = screenX(note.start);
-    unsigned screenR = screenX(effectiveEnd);
+    int screenL = screenX(note.start);
+    int screenR = screenX(effectiveEnd);
+    const int SCREEN_HEIGHT = height / 128;
+    int screenY = note.note * SCREEN_HEIGHT;
     SDL_Rect r {
-        static_cast<int>(screenL),
-        static_cast<int>(height / 4),
-        static_cast<int>(screenR - screenL),
-        static_cast<int>(height / 2)
+        screenL,
+        screenY,
+        screenR - screenL,
+        SCREEN_HEIGHT,
     };
     SDL_RenderFillRect(renderer, &r);
 }
@@ -52,6 +54,6 @@ void View::update() {
     SDL_RenderPresent(renderer);
 }
 
-unsigned View::screenX(unsigned t) {
+int View::screenX(unsigned t) {
     return static_cast<float>(t - leftT) / dt * width;
 }

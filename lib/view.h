@@ -15,7 +15,7 @@ public:
     void update();
 
 private:
-    unsigned screenX(unsigned t);
+    int screenX(unsigned t);
 
     unsigned width = 800, height = 600;
 
