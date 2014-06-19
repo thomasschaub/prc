@@ -33,7 +33,7 @@ PmStream* getInputStream(PmDeviceID id) {
 
 int main() {
     SDL_Init(SDL_INIT_VIDEO);
-    SDL_LogSetAllPriority(SDL_LOG_PRIORITY_DEBUG);
+    //SDL_LogSetAllPriority(SDL_LOG_PRIORITY_DEBUG);
 
     std::array<Note, 128> activeNotes;
     for (unsigned char i = 0; i < 128; ++i) {

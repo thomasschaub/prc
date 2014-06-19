@@ -47,7 +47,6 @@ void View::draw(const Note& note) {
         screenR - screenL,
         static_cast<int>(SCREEN_HEIGHT)
     };
-    std::cout << t << " " << screenL << " " << screenR << std::endl;
     SDL_RenderFillRect(renderer, &r);
 }
 
