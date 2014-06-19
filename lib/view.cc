@@ -37,16 +37,17 @@ void View::draw(const Note& note) {
         return;
     }
 
-    int screenL = screenX(note.start);
-    int screenR = screenX(effectiveEnd);
-    const int SCREEN_HEIGHT = height / 128;
-    int screenY = note.note * SCREEN_HEIGHT;
+    int screenL = std::max(0, screenX(note.start));
+    int screenR = std::min(screenX(effectiveEnd), static_cast<int>(width));
+    const float SCREEN_HEIGHT = height / 128.0f;
+    int screenY = height - (note.note + 1) * SCREEN_HEIGHT;
     SDL_Rect r {
         screenL,
         screenY,
         screenR - screenL,
-        SCREEN_HEIGHT,
+        static_cast<int>(SCREEN_HEIGHT)
     };
+    std::cout << t << " " << screenL << " " << screenR << std::endl;
     SDL_RenderFillRect(renderer, &r);
 }
 
