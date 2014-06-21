@@ -10,9 +10,9 @@ public:
     void setWidth(float dt);
     void setCenter(float c);
 
-    void clear();
+    void background();
     void draw(const Note& note);
-    void update();
+    void finish();
 
 private:
     int screenX(float t);

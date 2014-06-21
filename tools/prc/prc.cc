@@ -114,7 +114,7 @@ int main(int argc, const char* argv[]) {
         }
 
         // Prepare view
-        view.clear();
+        view.background();
         view.setTime(beatTime());
 
         // Process song
@@ -174,7 +174,7 @@ int main(int argc, const char* argv[]) {
             view.draw(note);
         }
 
-        view.update();
+        view.finish();
 
         // Limit frame rate
         auto elapsed = wallTime(nullptr) - frameStart;

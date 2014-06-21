@@ -23,7 +23,7 @@ void View::setCenter(float f) {
     center = std::max(0.0f, std::min(1.0f, f));
 }
 
-void View::clear() {
+void View::background() {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 }
@@ -50,7 +50,7 @@ void View::draw(const Note& note) {
     SDL_RenderFillRect(renderer, &r);
 }
 
-void View::update() {
+void View::finish() {
     auto lineX = center * width;
     SDL_RenderDrawLine(renderer, lineX, 0, lineX, height);
 
