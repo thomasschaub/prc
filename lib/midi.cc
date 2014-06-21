@@ -1,5 +1,11 @@
 #include "midi.h"
 
+#include "time.h"
+
+// TODO if we move these includes above include "time.h", we get weird linker
+// errors. For some reason, the functions in time.h are expected to have C
+// linkage.
+
 #include <cstdlib>
 
 #include <SDL2/SDL.h>
@@ -36,7 +42,7 @@ int getNoteEvent(PmStream* stream, NoteEvent* buffer, unsigned n) {
         NoteEvent& note = buffer[i];
         note.type = getType(pmBuffer[i]);
         note.note = getNote(pmBuffer[i]);
-        note.time = pmBuffer[i].timestamp;
+        note.time = beatTime();
         SDL_LogDebug(SDL_LOG_CATEGORY_INPUT, "Note %d %d %d\n", note.type, note.note, note.time);
         SDL_LogDebug(SDL_LOG_CATEGORY_INPUT, "Raw msg: %x\n", pmBuffer[i].message);
     }
