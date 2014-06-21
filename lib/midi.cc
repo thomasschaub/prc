@@ -62,3 +62,13 @@ void putNoteEvent(PmStream* stream, const NoteEvent& e) {
     SDL_LogDebug(SDL_LOG_CATEGORY_INPUT, "Send: %x\n", pmE.message);
     Pm_Write(stream, &pmE, 1);
 }
+
+void putAllOff(PmStream* stream) {
+    for (int i = 0; i < 128; ++i) {
+        PmEvent e {
+            (i << 8) | 0x80,
+            0
+        };
+        Pm_Write(stream, &e, 1);
+    }
+}

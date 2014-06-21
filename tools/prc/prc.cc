@@ -104,6 +104,7 @@ int main(int argc, const char* argv[]) {
                     case SDLK_0:
                         resetBeatTime();
                         playedNotes.clear();
+                        putAllOff(outputStream);
                         break;
                 }
                 break;
@@ -129,7 +130,7 @@ int main(int argc, const char* argv[]) {
                 };
                 putNoteEvent(outputStream, e);
             }
-            else if ((lastBeatTime < note.end && note.end <= beatTime()) || (beatTime() < note.start && note.start <= lastBeatTime)) {
+            else if (lastBeatTime < note.end && note.end <= beatTime()) {
                 NoteEvent e {
                     static_cast<unsigned char>(note.note),
                     0,
@@ -184,6 +185,9 @@ int main(int argc, const char* argv[]) {
         }
     }
 
+    putAllOff(outputStream);
+
     Pm_Close(stream);
+    Pm_Close(outputStream);
     Pm_Terminate();
 }
