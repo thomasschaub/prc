@@ -1,7 +1,7 @@
 BUILDDIR := build
 PREFIX := bin
 
-CXXFLAGS += -std=c++0x -Wall -Werror -Ilib
+CXXFLAGS += -std=c++11 -Wall -Werror -Ilib
 LDLIBS += -lportmidi -lportSMF `sdl2-config --libs`
 
 CXXFLAGS += -g -O0
