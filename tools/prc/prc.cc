@@ -90,6 +90,7 @@ int main(int argc, const char* argv[]) {
 
     bool run = true;
     while (run) {
+        auto lastBeatTime = beatTime();
         updateBeatTime(1);
 
         // Check SDL events
@@ -109,10 +110,26 @@ int main(int argc, const char* argv[]) {
         view.setTime(beatTime());
         std::cout << "\rt = " << beatTime() << std::flush;
 
-        // Draw song
+        // Process song
         SDL_SetRenderDrawColor(renderer, 255, 127, 0, 255);
         SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
         for (const auto& note: song) {
+            if (lastBeatTime < note.start && note.start <= beatTime()) {
+                NoteEvent e {
+                    static_cast<unsigned char>(note.note),
+                    127,
+                    ON
+                };
+                putNoteEvent(outputStream, e);
+            }
+            else if (lastBeatTime < note.end && note.end <= beatTime()) {
+                NoteEvent e {
+                    static_cast<unsigned char>(note.note),
+                    0,
+                    OFF
+                };
+                putNoteEvent(outputStream, e);
+            }
             view.draw(note);
         }
 
