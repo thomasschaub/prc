@@ -51,6 +51,9 @@ void View::draw(const Note& note) {
 }
 
 void View::update() {
+    auto lineX = center * width;
+    SDL_RenderDrawLine(renderer, lineX, 0, lineX, height);
+
     SDL_RenderPresent(renderer);
 }
 
