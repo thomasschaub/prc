@@ -21,6 +21,10 @@ float beatTime() {
     return beatT;
 }
 
+void resetBeatTime() {
+    beatT = 0;
+}
+
 void updateBeatTime(float s) {
     // Gather last and current wall time
     static int lastWallT = SDL_GetTicks();

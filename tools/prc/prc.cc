@@ -90,20 +90,28 @@ int main(int argc, const char* argv[]) {
 
     bool run = true;
     while (run) {
+        // Update time
+        auto lastBeatTime = beatTime();
+        updateBeatTime(1);
+        int frameStart = wallTime(nullptr);
+
         // Check SDL events
         SDL_Event e;
         while (SDL_PollEvent(&e)) {
             switch (e.type) {
+                case SDL_KEYDOWN:
+                switch (e.key.keysym.sym) {
+                    case SDLK_0:
+                        resetBeatTime();
+                        playedNotes.clear();
+                        break;
+                }
+                break;
             case SDL_QUIT:
                 run = false;
                 break;
             }
         }
-
-        // Update time
-        auto lastBeatTime = beatTime();
-        updateBeatTime(1);
-        int frameStart = wallTime(nullptr);
 
         // Prepare view
         view.clear();
@@ -121,7 +129,7 @@ int main(int argc, const char* argv[]) {
                 };
                 putNoteEvent(outputStream, e);
             }
-            else if (lastBeatTime < note.end && note.end <= beatTime()) {
+            else if ((lastBeatTime < note.end && note.end <= beatTime()) || (beatTime() < note.start && note.start <= lastBeatTime)) {
                 NoteEvent e {
                     static_cast<unsigned char>(note.note),
                     0,

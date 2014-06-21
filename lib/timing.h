@@ -6,7 +6,9 @@ void setBpm(float bpm);
 /**
  * Returns the current "time" in beats
  */
-extern float beatTime();
+float beatTime();
+
+void resetBeatTime();
 
 /**
  * Computes the dt since the last update and sets beat time accordingly
