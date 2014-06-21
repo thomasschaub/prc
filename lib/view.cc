@@ -26,6 +26,12 @@ void View::setCenter(float f) {
 void View::background() {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
+
+    SDL_SetRenderDrawColor(renderer, 80, 80, 80, 255);
+    for (int i = 0; i < 128; ++i) {
+        int y = (2*i+1) * (height / 256.0f);
+        SDL_RenderDrawLine(renderer, 0, y, width, y);
+    }
 }
 
 void View::draw(const Note& note) {
