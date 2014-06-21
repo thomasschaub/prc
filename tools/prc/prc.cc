@@ -66,7 +66,7 @@ int main(int argc, const char* argv[]) {
     View view(renderer);
 
     // Move song a few seconds into the future
-    auto songOffset = beatTime() + 16;
+    auto songOffset = beatTime() + 4;
     for (auto& note: song) {
         note.start += songOffset;
         note.end += songOffset;
@@ -91,6 +91,7 @@ int main(int argc, const char* argv[]) {
         int frameStart = wallTime(nullptr);
         //SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Time: %d\n", frameStart);
         view.setTime(beatTime());
+        std::cout << "\rt = " << beatTime() << std::flush;
 
         // Draw song
         SDL_SetRenderDrawColor(renderer, 255, 127, 0, 255);

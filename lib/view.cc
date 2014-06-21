@@ -54,6 +54,6 @@ void View::update() {
     SDL_RenderPresent(renderer);
 }
 
-int View::screenX(unsigned t) {
-    return static_cast<float>(t - leftT) / dt * width;
+int View::screenX(float t) {
+    return (t - leftT) / dt * width;
 }
