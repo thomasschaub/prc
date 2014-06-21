@@ -23,7 +23,7 @@ private:
     SDL_Renderer* renderer;
 
     unsigned t = 0;
-    unsigned leftT = 0, rightT = 0;
-    unsigned dt = 1000;
+    float leftT = 0, rightT = 0;
+    float dt = 8;
     float center = .5;
 };

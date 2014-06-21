@@ -3,7 +3,7 @@
 
 struct Note {
     int note;
-    unsigned start, end;
+    float start, end;
 };
 
 #endif

@@ -9,9 +9,9 @@ enum NoteEventType {
 };
 
 struct NoteEvent {
-    char note;
+    unsigned char note;
     NoteEventType type;
-    unsigned time;
+    float time;
 };
 
 int getNoteEvent(PmStream* stream, NoteEvent* buffer, unsigned n);
