@@ -1,14 +1,10 @@
 #include "midi.h"
 
-#include "time.h"
-
-// TODO if we move these includes above include "time.h", we get weird linker
-// errors. For some reason, the functions in time.h are expected to have C
-// linkage.
-
 #include <cstdlib>
 
 #include <SDL2/SDL.h>
+
+#include "timing.h"
 
 #if 0
 static void printName(int id) {

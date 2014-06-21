@@ -7,6 +7,7 @@
 #include "note.h"
 #include "midi.h"
 #include "song.h"
+#include "timing.h"
 #include "view.h"
 
 void printMidiDevices() {
