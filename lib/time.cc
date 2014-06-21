@@ -5,7 +5,7 @@
 namespace {
 
 float convertBeats(float bpm) {
-    return bpm / 60 * 1000;
+    return bpm / (60 * 1000);
 }
 
 float beatsPerMs = convertBeats(120);
