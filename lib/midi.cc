@@ -38,6 +38,7 @@ int getNoteEvent(PmStream* stream, NoteEvent* buffer, unsigned n) {
         note.note = getNote(pmBuffer[i]);
         note.time = pmBuffer[i].timestamp;
         SDL_LogDebug(SDL_LOG_CATEGORY_INPUT, "Note %d %d %d\n", note.type, note.note, note.time);
+        SDL_LogDebug(SDL_LOG_CATEGORY_INPUT, "Raw msg: %x\n", pmBuffer[i].message);
     }
     return pmN;
 }
