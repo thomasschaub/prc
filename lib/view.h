@@ -6,8 +6,8 @@ class View {
 public:
     View(SDL_Renderer* renderer);
 
-    void setTime(unsigned t);
-    void setWidth(unsigned dt);
+    void setTime(float t);
+    void setWidth(float dt);
     void setCenter(float c);
 
     void clear();
@@ -22,7 +22,7 @@ private:
     SDL_Window* window;
     SDL_Renderer* renderer;
 
-    unsigned t = 0;
+    float t = 0;
     float leftT = 0, rightT = 0;
     float dt = 8;
     float center = .5;

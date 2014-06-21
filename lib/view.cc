@@ -9,13 +9,13 @@ View::View(SDL_Renderer* renderer):
     SDL_GetRendererOutputSize(renderer, &width, &height);
 }
 
-void View::setTime(unsigned v) {
+void View::setTime(float v) {
     t = v;
     leftT = t - center*dt;
     rightT = t + (1-center)*dt;
 }
 
-void View::setWidth(unsigned v) {
+void View::setWidth(float v) {
     dt = v;
 }
 

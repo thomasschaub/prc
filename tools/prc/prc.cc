@@ -25,7 +25,7 @@ PmStream* getInputStream(PmDeviceID id) {
     const PmDeviceInfo* info = Pm_GetDeviceInfo(id);
     std::cout << info->name << " " << info->input << std::endl;
     PmStream* stream;
-    PmError err = Pm_OpenInput(&stream, id, nullptr, 8, now, nullptr);
+    PmError err = Pm_OpenInput(&stream, id, nullptr, 8, wallTime, nullptr);
     if (err != pmNoError) {
         std::cerr << "Error opening input device" << std::endl;
     }
@@ -66,7 +66,7 @@ int main(int argc, const char* argv[]) {
     View view(renderer);
 
     // Move song a few seconds into the future
-    auto songOffset = now(nullptr) + 1000;
+    auto songOffset = beatTime() + 16;
     for (auto& note: song) {
         note.start += songOffset;
         note.end += songOffset;
@@ -74,6 +74,8 @@ int main(int argc, const char* argv[]) {
 
     bool run = true;
     while (run) {
+        updateBeatTime(1);
+
         // Check SDL events
         SDL_Event e;
         while (SDL_PollEvent(&e)) {
@@ -86,9 +88,9 @@ int main(int argc, const char* argv[]) {
 
         // Update view
         view.clear();
-        int frameStart = now(nullptr);
+        int frameStart = wallTime(nullptr);
         //SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Time: %d\n", frameStart);
-        view.setTime(frameStart);
+        view.setTime(beatTime());
 
         // Draw song
         SDL_SetRenderDrawColor(renderer, 255, 127, 0, 255);
@@ -132,7 +134,7 @@ int main(int argc, const char* argv[]) {
 
         view.update();
 
-        auto elapsed = now(nullptr) - frameStart;
+        auto elapsed = wallTime(nullptr) - frameStart;
         auto delay = 1000 / 60 - elapsed;
         if (delay > 0) {
             SDL_Delay(delay);
