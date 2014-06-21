@@ -11,6 +11,7 @@ OBJS := $(LIBS:%.cc=$(BUILDDIR)/%.o)
 
 include tools/prc/Makefile
 include tools/allegroTest/Makefile
+include tools/playMidi/Makefile
 
 all: install
 
