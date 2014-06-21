@@ -33,12 +33,24 @@ PmStream* getInputStream(PmDeviceID id) {
     return stream;
 }
 
+PmStream* getOutputStream(PmDeviceID id) {
+    PmStream* stream;
+    PmError err = Pm_OpenOutput(&stream, id, nullptr, 8, wallTime, nullptr, 0);
+    if (err != pmNoError) {
+        std::cerr << "Error opening ouput device" << std::endl;
+    }
+    return stream;
+}
+
 int main(int argc, const char* argv[]) {
     if (argc != 2) {
         std::cerr << "Usage: " << argv[0] << " <midi>" << std::endl;
         return 1;
     }
+
     const char* songPath = argv[1];
+    PmDeviceID inputDevice = 5;
+    PmDeviceID outputDevice = 6;
 
     SDL_Init(SDL_INIT_VIDEO);
     //SDL_LogSetAllPriority(SDL_LOG_PRIORITY_DEBUG);
@@ -55,10 +67,13 @@ int main(int argc, const char* argv[]) {
     // Open user input
     Pm_Initialize();
     printMidiDevices();
-    PmStream* stream = getInputStream(5);
+    PmStream* stream = getInputStream(inputDevice);
 
     // Open song
     std::vector<Note> song = loadSong(songPath);
+
+    // Open output
+    PmStream* outputStream = getOutputStream(outputDevice);
 
     // Create output
     SDL_Window* window;
@@ -105,6 +120,7 @@ int main(int argc, const char* argv[]) {
         NoteEvent noteEvents[8];
         int n = getNoteEvent(stream, noteEvents, 8);
         for (int i = 0; i < n; ++i) {
+            putNoteEvent(outputStream, noteEvents[i]);
             const NoteEvent& e = noteEvents[i];
             Note& note = activeNotes[e.note];
             switch (e.type) {

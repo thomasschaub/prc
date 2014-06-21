@@ -45,3 +45,18 @@ int getNoteEvent(PmStream* stream, NoteEvent* buffer, unsigned n) {
     return pmN;
 }
 
+void putNoteEvent(PmStream* stream, const NoteEvent& e) {
+    PmEvent pmE = {0};
+    switch (e.type) {
+        case ON:
+            pmE.message = 0x90;
+            break;
+        case OFF:
+            pmE.message = 0x80;
+            break;
+    }
+    pmE.message |= e.note << 8;
+    pmE.message |= 127 << 16;
+    SDL_LogDebug(SDL_LOG_CATEGORY_INPUT, "Send: %x\n", pmE.message);
+    Pm_Write(stream, &pmE, 1);
+}
