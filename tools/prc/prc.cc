@@ -122,7 +122,7 @@ int main(int argc, const char* argv[]) {
         for (int i = 0; i < n; ++i) {
             putNoteEvent(outputStream, noteEvents[i]);
             const NoteEvent& e = noteEvents[i];
-            Note& note = activeNotes[e.note];
+            Note& note = activeNotes[e.pitch];
             switch (e.type) {
                 case ON:
                     note.start = e.time;
@@ -130,7 +130,7 @@ int main(int argc, const char* argv[]) {
                     break;
                 case OFF:
                     note.end = e.time;
-                    playedNotes.push_back(activeNotes[e.note]);
+                    playedNotes.push_back(activeNotes[e.pitch]);
 
                     note.start = 0;
                     break;

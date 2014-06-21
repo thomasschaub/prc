@@ -9,7 +9,8 @@ enum NoteEventType {
 };
 
 struct NoteEvent {
-    unsigned char note;
+    unsigned char pitch;
+    unsigned char velocity;
     NoteEventType type;
     float time;
 };
