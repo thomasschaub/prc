@@ -90,9 +90,6 @@ int main(int argc, const char* argv[]) {
 
     bool run = true;
     while (run) {
-        auto lastBeatTime = beatTime();
-        updateBeatTime(1);
-
         // Check SDL events
         SDL_Event e;
         while (SDL_PollEvent(&e)) {
@@ -103,12 +100,14 @@ int main(int argc, const char* argv[]) {
             }
         }
 
-        // Update view
-        view.clear();
+        // Update time
+        auto lastBeatTime = beatTime();
+        updateBeatTime(1);
         int frameStart = wallTime(nullptr);
-        //SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Time: %d\n", frameStart);
+
+        // Prepare view
+        view.clear();
         view.setTime(beatTime());
-        std::cout << "\rt = " << beatTime() << std::flush;
 
         // Process song
         SDL_SetRenderDrawColor(renderer, 255, 127, 0, 255);
@@ -133,7 +132,7 @@ int main(int argc, const char* argv[]) {
             view.draw(note);
         }
 
-        // Read user input
+        // Read and replay piano input
         NoteEvent noteEvents[8];
         int n = getNoteEvent(stream, noteEvents, 8);
         for (int i = 0; i < n; ++i) {
@@ -154,7 +153,7 @@ int main(int argc, const char* argv[]) {
             }
         }
 
-        // Draw user input
+        // Draw piano input
         SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_ADD);
         SDL_SetRenderDrawColor(renderer, 255, 128, 255, 255);
         for (auto& note: activeNotes) {
@@ -169,6 +168,7 @@ int main(int argc, const char* argv[]) {
 
         view.update();
 
+        // Limit frame rate
         auto elapsed = wallTime(nullptr) - frameStart;
         auto delay = 1000 / 60 - elapsed;
         if (delay > 0) {
