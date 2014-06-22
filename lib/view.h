@@ -14,13 +14,14 @@ public:
     void draw(const Note& note);
     void finish();
 
+    unsigned char minPitch, maxPitch;
+
 private:
     int screenX(float t);
     float noteH();
     float noteY(float pitch);
 
     int width, height;
-    unsigned char minPitch = 58, maxPitch = 74;
 
     SDL_Window* window;
     SDL_Renderer* renderer;

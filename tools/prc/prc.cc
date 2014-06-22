@@ -81,12 +81,21 @@ int main(int argc, const char* argv[]) {
     SDL_CreateWindowAndRenderer(800, 600, 0, &window, &renderer);
     View view(renderer);
 
-    // Move song a few seconds into the future
+    // Move song a few seconds into the future and find min/max pitch
+    int minPitch = 128;
+    int maxPitch = 0;
     auto songOffset = beatTime() + 4;
     for (auto& note: song) {
         note.start += songOffset;
         note.end += songOffset;
+
+        minPitch = std::min(minPitch, note.note);
+        maxPitch = std::max(maxPitch, note.note);
     }
+    minPitch = (minPitch - 12) / 12 * 12;
+    maxPitch = (maxPitch + 24) / 12 * 12 - 1;
+    view.minPitch = std::max(0, minPitch);
+    view.maxPitch = std::min(127, maxPitch);
 
     bool run = true;
     while (run) {
