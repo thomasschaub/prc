@@ -71,6 +71,7 @@ int main(int argc, const char* argv[]) {
 
     // Open song
     std::vector<Note> song = loadSong(songPath);
+    setBpm(96);
 
     // Open output
     PmStream* outputStream = getOutputStream(outputDevice);
@@ -98,24 +99,41 @@ int main(int argc, const char* argv[]) {
     view.maxPitch = std::min(127, maxPitch);
 
     bool run = true;
+    float playbackSpeed = 1;
     while (run) {
         // Update time
         auto lastBeatTime = beatTime();
-        updateBeatTime(1);
+        updateBeatTime(playbackSpeed);
         int frameStart = wallTime(nullptr);
 
         // Check SDL events
         SDL_Event e;
         while (SDL_PollEvent(&e)) {
             switch (e.type) {
-                case SDL_KEYDOWN:
+            case SDL_KEYDOWN:
                 switch (e.key.keysym.sym) {
-                    case SDLK_0:
-                        resetBeatTime();
-                        playedNotes.clear();
-                        putAllOff(outputStream, 0);
-                        putAllOff(outputStream, 1);
-                        break;
+                case SDLK_0:
+                    resetBeatTime();
+                    playedNotes.clear();
+                    putAllOff(outputStream, 0);
+                    putAllOff(outputStream, 1);
+                    break;
+                case SDLK_SPACE:
+                    if (playbackSpeed == 0) {
+                        playbackSpeed = 1;
+                    }
+                    else {
+                        playbackSpeed = 0;
+                        putAllOff(outputStream, 1); // only mute song
+                    }
+                    break;
+                case SDLK_LEFT:
+                    putAllOff(outputStream, 1); // only mute song
+                    seek(-4);
+                    break;
+                case SDLK_RIGHT:
+                    seek(4);
+                    break;
                 }
                 break;
             case SDL_QUIT:
