@@ -28,8 +28,10 @@ void View::background() {
     SDL_RenderClear(renderer);
 
     SDL_SetRenderDrawColor(renderer, 80, 80, 80, 255);
-    for (int i = 0; i < 128; ++i) {
-        int y = (2*i+1) * (height / 256.0f);
+
+    float h = noteH();
+    for (int i = 0; i < maxPitch - minPitch + 1; ++i) {
+        int y = (i + .5) * h;
         SDL_RenderDrawLine(renderer, 0, y, width, y);
     }
 }
@@ -45,13 +47,13 @@ void View::draw(const Note& note) {
 
     int screenL = std::max(0, screenX(note.start));
     int screenR = std::min(screenX(effectiveEnd), static_cast<int>(width));
-    const float SCREEN_HEIGHT = height / 128.0f;
-    int screenY = height - (note.note + 1) * SCREEN_HEIGHT;
+    float screenH = noteH();
+    int screenY = noteY(note.note);
     SDL_Rect r {
         screenL,
         screenY,
         screenR - screenL,
-        static_cast<int>(SCREEN_HEIGHT)
+        static_cast<int>(screenH)
     };
     SDL_RenderFillRect(renderer, &r);
 }
@@ -65,4 +67,12 @@ void View::finish() {
 
 int View::screenX(float t) {
     return (t - leftT) / dt * width;
+}
+
+float View::noteH() {
+    return static_cast<float>(height) / (maxPitch - minPitch + 1);
+}
+
+float View::noteY(float pitch) {
+    return (1 - (pitch - minPitch) / (maxPitch - minPitch)) * (height - noteH());
 }
