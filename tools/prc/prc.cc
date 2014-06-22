@@ -10,6 +10,13 @@
 #include "timing.h"
 #include "view.h"
 
+enum PlaybackState {
+    PLAY,
+    PAUSE,
+    SEEK_L,
+    SEEK_R
+};
+
 void printMidiDevices() {
     int n = Pm_CountDevices();
     for (int i = 0; i < n; ++i) {
@@ -99,13 +106,9 @@ int main(int argc, const char* argv[]) {
     view.maxPitch = std::min(127, maxPitch);
 
     bool run = true;
-    float playbackSpeed = 1;
-    while (run) {
-        // Update time
-        auto lastBeatTime = beatTime();
-        updateBeatTime(playbackSpeed);
-        int frameStart = wallTime(nullptr);
+    PlaybackState playbackState = PLAY;
 
+    while (run) {
         // Check SDL events
         SDL_Event e;
         while (SDL_PollEvent(&e)) {
@@ -119,20 +122,30 @@ int main(int argc, const char* argv[]) {
                     putAllOff(outputStream, 1);
                     break;
                 case SDLK_SPACE:
-                    if (playbackSpeed == 0) {
-                        playbackSpeed = 1;
+                    if (playbackState == PAUSE) {
+                        playbackState = PLAY;
                     }
                     else {
-                        playbackSpeed = 0;
+                        playbackState = PAUSE;
                         putAllOff(outputStream, 1); // only mute song
                     }
                     break;
                 case SDLK_LEFT:
-                    putAllOff(outputStream, 1); // only mute song
-                    seek(-4);
+                    playbackState = SEEK_L;
                     break;
                 case SDLK_RIGHT:
-                    seek(4);
+                    playbackState = SEEK_R;
+                    break;
+                case SDLK_q:
+                    run = false;
+                    break;
+                }
+                break;
+            case SDL_KEYUP:
+                switch (e.key.keysym.sym) {
+                case SDLK_LEFT:
+                case SDLK_RIGHT:
+                    playbackState = PLAY;
                     break;
                 }
                 break;
@@ -142,6 +155,28 @@ int main(int argc, const char* argv[]) {
             }
         }
 
+        // Play/pause/seek
+        float playbackSpeed = 1;
+        switch (playbackState) {
+        case PLAY:
+            break;
+        case PAUSE:
+            playbackSpeed = 0;
+            break;
+        case SEEK_L:
+            playbackSpeed = -16;
+            break;
+        case SEEK_R:
+            playbackSpeed = 16;
+            break;
+        }
+
+        // Update time
+        auto lastBeatTime = beatTime();
+        updateBeatTime(playbackSpeed);
+        int frameStart = wallTime(nullptr);
+
+
         // Prepare view
         view.background();
         view.setTime(beatTime());
@@ -150,7 +185,12 @@ int main(int argc, const char* argv[]) {
         SDL_SetRenderDrawColor(renderer, 255, 127, 0, 255);
         SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
         for (const auto& note: song) {
-            if (lastBeatTime < note.start && note.start <= beatTime()) {
+            // TODO send the inverse signal if we seek backwards
+            bool on = (lastBeatTime < note.start && note.start <= beatTime())
+                || ((beatTime() < note.end && note.end <= lastBeatTime));
+            bool off = (lastBeatTime < note.end && note.end <= beatTime())
+                || (beatTime() < note.start && note.start <= lastBeatTime);
+            if (on) {
                 NoteEvent e {
                     1,
                     static_cast<unsigned char>(note.note),
@@ -159,7 +199,7 @@ int main(int argc, const char* argv[]) {
                 };
                 putNoteEvent(outputStream, e);
             }
-            else if (lastBeatTime < note.end && note.end <= beatTime()) {
+            if (off) {
                 NoteEvent e {
                     1,
                     static_cast<unsigned char>(note.note),
