@@ -30,5 +30,5 @@ private:
     float t = 0;
     float leftT = 0, rightT = 0;
     float dt = 8;
-    float center = .5;
+    float center = .3;
 };
