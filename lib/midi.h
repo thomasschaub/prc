@@ -9,6 +9,7 @@ enum NoteEventType {
 };
 
 struct NoteEvent {
+    unsigned char channel;
     unsigned char pitch;
     unsigned char velocity;
     NoteEventType type;
@@ -19,6 +20,6 @@ int getNoteEvent(PmStream* stream, NoteEvent* buffer, unsigned n);
 
 void putNoteEvent(PmStream* stream, const NoteEvent& e);
 
-void putAllOff(PmStream* stream);
+void putAllOff(PmStream* stream, unsigned char channel);
 
 #endif

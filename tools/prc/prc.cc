@@ -53,7 +53,7 @@ int main(int argc, const char* argv[]) {
     PmDeviceID outputDevice = 6;
 
     SDL_Init(SDL_INIT_VIDEO);
-    //SDL_LogSetAllPriority(SDL_LOG_PRIORITY_DEBUG);
+    SDL_LogSetAllPriority(SDL_LOG_PRIORITY_DEBUG);
 
     // Prepare user input
     std::array<Note, 128> activeNotes;
@@ -104,7 +104,8 @@ int main(int argc, const char* argv[]) {
                     case SDLK_0:
                         resetBeatTime();
                         playedNotes.clear();
-                        putAllOff(outputStream);
+                        putAllOff(outputStream, 0);
+                        putAllOff(outputStream, 1);
                         break;
                 }
                 break;
@@ -124,6 +125,7 @@ int main(int argc, const char* argv[]) {
         for (const auto& note: song) {
             if (lastBeatTime < note.start && note.start <= beatTime()) {
                 NoteEvent e {
+                    1,
                     static_cast<unsigned char>(note.note),
                     127,
                     ON
@@ -132,6 +134,7 @@ int main(int argc, const char* argv[]) {
             }
             else if (lastBeatTime < note.end && note.end <= beatTime()) {
                 NoteEvent e {
+                    1,
                     static_cast<unsigned char>(note.note),
                     0,
                     OFF
@@ -185,7 +188,8 @@ int main(int argc, const char* argv[]) {
         }
     }
 
-    putAllOff(outputStream);
+    putAllOff(outputStream, 0);
+    putAllOff(outputStream, 1);
 
     Pm_Close(stream);
     Pm_Close(outputStream);

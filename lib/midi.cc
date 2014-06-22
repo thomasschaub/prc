@@ -1,5 +1,6 @@
 #include "midi.h"
 
+#include <cassert>
 #include <cstdlib>
 
 #include <SDL2/SDL.h>
@@ -11,6 +12,7 @@ namespace {
 NoteEvent convert(const PmEvent& e) {
     auto msg = e.message;
     NoteEvent ret;
+    ret.channel = 0;
     // channel = e.message % 0x10
     switch ((msg >> 4) % 0x10) {
         case 0x8:
@@ -37,6 +39,7 @@ PmEvent convert(const NoteEvent& e) {
             ret.message = 0x80;
             break;
     }
+    ret.message |= e.channel;
     ret.message |= e.pitch << 8;
     ret.message |= e.velocity << 16;
     return ret;
@@ -63,10 +66,12 @@ void putNoteEvent(PmStream* stream, const NoteEvent& e) {
     Pm_Write(stream, &pmE, 1);
 }
 
-void putAllOff(PmStream* stream) {
+void putAllOff(PmStream* stream, unsigned char channel) {
+    assert(0 <= channel && channel <= 16);
+
     for (int i = 0; i < 128; ++i) {
         PmEvent e {
-            (i << 8) | 0x80,
+            (i << 8) | 0x80 | channel,
             0
         };
         Pm_Write(stream, &e, 1);
