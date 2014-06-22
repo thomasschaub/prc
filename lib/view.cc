@@ -27,10 +27,35 @@ void View::background() {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 
-    SDL_SetRenderDrawColor(renderer, 80, 80, 80, 255);
+    const int IVORY_INTENSITY = 135;
+    const int EBONY_INTENSITY = 80;
 
     float h = noteH();
     for (int i = 0; i < maxPitch - minPitch + 1; ++i) {
+        int pitch = minPitch + i;
+        switch (pitch % 12) {
+        case 1:
+        case 3:
+        case 6:
+        case 8:
+        case 10:
+            SDL_SetRenderDrawColor(
+                renderer,
+                EBONY_INTENSITY,
+                EBONY_INTENSITY,
+                EBONY_INTENSITY,
+                255
+            );
+            break;
+        default:
+            SDL_SetRenderDrawColor(
+                renderer,
+                IVORY_INTENSITY,
+                IVORY_INTENSITY,
+                IVORY_INTENSITY,
+                255
+            );
+        }
         int y = (i + .5) * h;
         SDL_RenderDrawLine(renderer, 0, y, width, y);
     }
