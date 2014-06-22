@@ -165,6 +165,7 @@ int main(int argc, const char* argv[]) {
             break;
         case SEEK_L:
             playbackSpeed = -16;
+            playedNotes.clear();
             break;
         case SEEK_R:
             playbackSpeed = 16;
