@@ -47,8 +47,8 @@ void View::background() {
     const float HIGHLIGHT_TIME = 1.0f;
     double temp;
     float timeSinceBeat = clamp(0, modf(t, &temp), HIGHLIGHT_TIME);
-    float bgIntensityMult = (HIGHLIGHT_TIME - timeSinceBeat) / HIGHLIGHT_TIME;
-    int bgIntensity = 40 * bgIntensityMult;
+    float bgIntensityMult = pow((HIGHLIGHT_TIME - timeSinceBeat) / HIGHLIGHT_TIME, 2);
+    int bgIntensity = 80 * bgIntensityMult;
     SDL_SetRenderDrawColor(renderer, bgIntensity, bgIntensity, bgIntensity, 255);
     SDL_RenderClear(renderer);
 
