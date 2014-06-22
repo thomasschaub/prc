@@ -1,7 +1,27 @@
 #include "view.h"
 
 #include <algorithm>
+#include <cmath>
 #include <iostream>
+
+namespace {
+
+/**
+ * Puts b in the range [a, b]
+ */
+float clamp(float a, float b, float c) {
+    if (b < a) {
+        return a;
+    }
+    else if (c < b) {
+        return c;
+    }
+    else {
+        return b;
+    }
+}
+
+}
 
 View::View(SDL_Renderer* renderer):
     renderer(renderer)
@@ -24,8 +44,15 @@ void View::setCenter(float f) {
 }
 
 void View::background() {
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    const float HIGHLIGHT_TIME = 1.0f;
+    double temp;
+    float timeSinceBeat = clamp(0, modf(t, &temp), HIGHLIGHT_TIME);
+    float bgIntensityMult = (HIGHLIGHT_TIME - timeSinceBeat) / HIGHLIGHT_TIME;
+    int bgIntensity = 40 * bgIntensityMult;
+    SDL_SetRenderDrawColor(renderer, bgIntensity, bgIntensity, bgIntensity, 255);
     SDL_RenderClear(renderer);
+
+    // Draw lines of the staff
 
     const int IVORY_INTENSITY = 135;
     const int EBONY_INTENSITY = 80;
