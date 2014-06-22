@@ -110,7 +110,7 @@ void View::draw(const Note& note) {
     int screenL = std::max(0, screenX(note.start));
     int screenR = std::min(screenX(effectiveEnd), static_cast<int>(width));
     float screenH = noteH();
-    int screenY = noteY(note.note);
+    int screenY = noteY(note.pitch);
     SDL_Rect r {
         screenL,
         screenY,
@@ -118,6 +118,11 @@ void View::draw(const Note& note) {
         static_cast<int>(screenH)
     };
     SDL_RenderFillRect(renderer, &r);
+}
+
+void View::line(const Note& note) {
+    auto y = noteY(note.pitch) + 0.5*noteH();
+    SDL_RenderDrawLine(renderer, 0, y, width, y);
 }
 
 void View::finish() {

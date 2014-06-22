@@ -12,6 +12,7 @@ public:
 
     void background();
     void draw(const Note& note);
+    void line(const Note& note);
     void finish();
 
     unsigned char minPitch, maxPitch;

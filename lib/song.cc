@@ -19,6 +19,7 @@ std::vector<Note> loadSong(const char* path) {
                     {
                         Note n {
                             static_cast<int>(event->get_identifier()),
+                            static_cast<int>(event->get_loud()),
                             static_cast<float>(event->get_start_time()),
                             static_cast<float>(event->get_end_time())
                         };

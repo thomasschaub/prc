@@ -2,7 +2,7 @@
 #define NOTE_H__
 
 struct Note {
-    int note;
+    int pitch, velocity;
     float start, end;
 };
 

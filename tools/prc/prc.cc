@@ -67,7 +67,7 @@ int main(int argc, const char* argv[]) {
     for (unsigned char i = 0; i < 128; ++i) {
         Note& note = activeNotes[i];
         note = {0};
-        note.note = i;
+        note.pitch = i;
     }
     std::vector<Note> playedNotes;
 
@@ -97,8 +97,8 @@ int main(int argc, const char* argv[]) {
         note.start += songOffset;
         note.end += songOffset;
 
-        minPitch = std::min(minPitch, note.note);
-        maxPitch = std::max(maxPitch, note.note);
+        minPitch = std::min(minPitch, note.pitch);
+        maxPitch = std::max(maxPitch, note.pitch);
     }
     minPitch = (minPitch - 12) / 12 * 12;
     maxPitch = (maxPitch + 24) / 12 * 12 - 1;
@@ -193,8 +193,8 @@ int main(int argc, const char* argv[]) {
             if (on) {
                 NoteEvent e {
                     1,
-                    static_cast<unsigned char>(note.note),
-                    127,
+                    static_cast<unsigned char>(note.pitch),
+                    static_cast<unsigned char>(note.velocity),
                     ON
                 };
                 putNoteEvent(outputStream, e);
@@ -202,8 +202,8 @@ int main(int argc, const char* argv[]) {
             if (off) {
                 NoteEvent e {
                     1,
-                    static_cast<unsigned char>(note.note),
-                    0,
+                    static_cast<unsigned char>(note.pitch),
+                    static_cast<unsigned char>(note.velocity),
                     OFF
                 };
                 putNoteEvent(outputStream, e);
@@ -237,9 +237,11 @@ int main(int argc, const char* argv[]) {
         SDL_SetRenderDrawColor(renderer, 255, 128, 255, 255);
         for (auto& note: activeNotes) {
             if (note.start != 0) {
+                view.line(note);
                 view.draw(note);
             }
         }
+        SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_ADD);
         SDL_SetRenderDrawColor(renderer, 0, 128, 255, 255);
         for (auto& note: playedNotes) {
             view.draw(note);
