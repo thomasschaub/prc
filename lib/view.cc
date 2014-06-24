@@ -105,7 +105,7 @@ void View::background() {
 
 void View::draw(const Note& note) {
     // Check if note is out of screen
-    auto effectiveEnd = note.end == 0 ? t : note.end;
+    auto effectiveEnd = note.end == -1 ? t : note.end;
     if (isOutOfScreen(note.start, effectiveEnd)) {
         return;
     }
@@ -125,7 +125,7 @@ void View::draw(const Note& note) {
 
 void View::drawHollow(const Note& note) {
     // Check if note is out of screen
-    auto effectiveEnd = note.end == 0 ? t : note.end;
+    auto effectiveEnd = note.end == -1 ? t : note.end;
     if (isOutOfScreen(note.start, effectiveEnd)) {
         return;
     }

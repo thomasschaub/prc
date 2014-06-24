@@ -65,9 +65,7 @@ int main(int argc, const char* argv[]) {
     // Prepare user input
     std::array<Note, 128> activeNotes;
     for (unsigned char i = 0; i < 128; ++i) {
-        Note& note = activeNotes[i];
-        note = {0};
-        note.pitch = i;
+        activeNotes[i].pitch = i;
     }
     std::vector<Note> playedNotes;
 
@@ -214,7 +212,7 @@ int main(int argc, const char* argv[]) {
 
         // Draw piano input
         for (auto& note: activeNotes) {
-            if (note.start != 0) {
+            if (note.start != -1) {
                 SDL_SetRenderDrawColor(renderer, 30, 158, 255, 180);
                 view.line(note);
                 SDL_SetRenderDrawColor(renderer, 30, 158, 255, 255);
@@ -236,13 +234,11 @@ int main(int argc, const char* argv[]) {
             switch (e.type) {
                 case ON:
                     note.start = e.time;
-                    note.end = 0;
                     break;
                 case OFF:
                     note.end = e.time;
                     playedNotes.push_back(activeNotes[e.pitch]);
-
-                    note.start = 0;
+                    note.reset();
                     break;
             }
         }
