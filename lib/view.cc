@@ -184,9 +184,9 @@ void View::line(const Note& note) {
     int y = noteY(note.pitch);
     SDL_Rect rect {
         0,
-        y,
+        y + NOTE_BORDER_WIDTH,
         width,
-        static_cast<int>(noteH())
+        static_cast<int>(noteH()) - 2*NOTE_BORDER_WIDTH
     };
 
     SDL_RenderFillRect(renderer, &rect);
