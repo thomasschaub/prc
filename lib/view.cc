@@ -51,8 +51,8 @@ void View::background() {
 
     // Draw lines of the staff
 
-    const int C_INTENSITY = 200;
-    const int IVORY_INTENSITY = 190;
+    const int C_INTENSITY = 225;
+    const int IVORY_INTENSITY = 210;
     const int EBONY_INTENSITY = 70;
 
     float h = noteH();
@@ -181,8 +181,15 @@ void View::drawHollow(const Note& note) {
 }
 
 void View::line(const Note& note) {
-    auto y = noteY(note.pitch) + 0.5*noteH();
-    SDL_RenderDrawLine(renderer, 0, y, width, y);
+    int y = noteY(note.pitch);
+    SDL_Rect rect {
+        0,
+        y,
+        width,
+        static_cast<int>(noteH())
+    };
+
+    SDL_RenderFillRect(renderer, &rect);
 }
 
 void View::finish() {

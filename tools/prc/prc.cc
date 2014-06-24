@@ -88,6 +88,7 @@ int main(int argc, const char* argv[]) {
     SDL_Renderer* renderer;
     SDL_CreateWindowAndRenderer(800, 600, 0, &window, &renderer);
     View view(renderer);
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
     // Move song a few seconds into the future and find min/max pitch
     int minPitch = 128;
@@ -211,6 +212,20 @@ int main(int argc, const char* argv[]) {
             view.drawHollow(note);
         }
 
+        // Draw piano input
+        for (auto& note: activeNotes) {
+            if (note.start != 0) {
+                SDL_SetRenderDrawColor(renderer, 30, 158, 255, 180);
+                view.line(note);
+                SDL_SetRenderDrawColor(renderer, 30, 158, 255, 255);
+                view.draw(note);
+            }
+        }
+        SDL_SetRenderDrawColor(renderer, 0, 128, 255, 255);
+        for (auto& note: playedNotes) {
+            view.draw(note);
+        }
+
         // Read and replay piano input
         NoteEvent noteEvents[8];
         int n = getNoteEvent(stream, noteEvents, 8);
@@ -230,19 +245,6 @@ int main(int argc, const char* argv[]) {
                     note.start = 0;
                     break;
             }
-        }
-
-        // Draw piano input
-        SDL_SetRenderDrawColor(renderer, 30, 158, 255, 255);
-        for (auto& note: activeNotes) {
-            if (note.start != 0) {
-                view.line(note);
-                view.draw(note);
-            }
-        }
-        SDL_SetRenderDrawColor(renderer, 0, 128, 255, 255);
-        for (auto& note: playedNotes) {
-            view.draw(note);
         }
 
         view.finish();
