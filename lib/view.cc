@@ -121,6 +121,26 @@ void View::line(const Note& note) {
 }
 
 void View::finish() {
+    // Draw metronome
+    {
+    float highlightTime = 1.0f;
+    double temp;
+    float timeSinceBeat = clamp(0, modf(t, &temp), highlightTime);
+    float metronomeSize = pow((highlightTime - timeSinceBeat) / highlightTime, 3);
+
+    int metronomeX = width - 50;
+    int metronomeY = 50;
+    int metronomeW = 20 * metronomeSize;
+    int metronomeH = metronomeW;
+    SDL_Rect metronomeRect {
+        metronomeX - metronomeW,
+        metronomeY - metronomeH,
+        2*metronomeW,
+        2*metronomeH
+    };
+    SDL_RenderFillRect(renderer, &metronomeRect);
+    }
+
     auto lineX = center * width;
     SDL_RenderDrawLine(renderer, lineX, 0, lineX, height);
 
