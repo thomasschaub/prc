@@ -184,7 +184,6 @@ int main(int argc, const char* argv[]) {
 
         // Process song
         SDL_SetRenderDrawColor(renderer, 255, 127, 0, 255);
-        SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
         for (const auto& note: song) {
             // TODO send the inverse signal if we seek backwards
             bool on = (lastBeatTime < note.start && note.start <= beatTime())
@@ -234,15 +233,13 @@ int main(int argc, const char* argv[]) {
         }
 
         // Draw piano input
-        SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_ADD);
-        SDL_SetRenderDrawColor(renderer, 255, 128, 255, 255);
+        SDL_SetRenderDrawColor(renderer, 30, 158, 255, 255);
         for (auto& note: activeNotes) {
             if (note.start != 0) {
                 view.line(note);
                 view.draw(note);
             }
         }
-        SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_ADD);
         SDL_SetRenderDrawColor(renderer, 0, 128, 255, 255);
         for (auto& note: playedNotes) {
             view.draw(note);
