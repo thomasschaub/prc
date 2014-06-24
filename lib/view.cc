@@ -50,11 +50,11 @@ void View::background() {
     // Draw lines of the staff
 
     const int C_INTENSITY = 200;
-    const int IVORY_INTENSITY = 135;
-    const int EBONY_INTENSITY = 80;
+    const int IVORY_INTENSITY = 190;
+    const int EBONY_INTENSITY = 70;
 
     float h = noteH();
-    for (int i = 0; i < maxPitch - minPitch + 1; ++i) {
+    for (int i = maxPitch - minPitch; i >= 0; --i) {
         int pitch = minPitch + i;
         switch (pitch % 12) {
         case 0:
@@ -88,7 +88,15 @@ void View::background() {
                 255
             );
         }
-        int y = height - (i + .5) * h;
+        int y = height - (i + 1) * h;
+        SDL_Rect rect {
+            0,
+            y,
+            width,
+            static_cast<int>(h) + 1
+        };
+        SDL_RenderFillRect(renderer, &rect);
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderDrawLine(renderer, 0, y, width, y);
     }
 }
