@@ -208,7 +208,7 @@ int main(int argc, const char* argv[]) {
                 };
                 putNoteEvent(outputStream, e);
             }
-            view.draw(note);
+            view.drawHollow(note);
         }
 
         // Read and replay piano input

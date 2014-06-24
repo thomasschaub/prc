@@ -12,6 +12,7 @@ public:
 
     void background();
     void draw(const Note& note);
+    void drawHollow(const Note& note);
     void line(const Note& note);
     void finish();
 
@@ -21,6 +22,8 @@ private:
     int screenX(float t);
     float noteH();
     float noteY(float pitch);
+
+    bool isOutOfScreen(float start, float end) const;
 
     int width, height;
 

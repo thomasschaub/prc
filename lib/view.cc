@@ -21,6 +21,8 @@ float clamp(float a, float b, float c) {
     }
 }
 
+const int NOTE_BORDER_WIDTH = 2;
+
 }
 
 View::View(SDL_Renderer* renderer):
@@ -104,9 +106,7 @@ void View::background() {
 void View::draw(const Note& note) {
     // Check if note is out of screen
     auto effectiveEnd = note.end == 0 ? t : note.end;
-    bool leftOut = effectiveEnd < leftT;
-    bool rightOut = rightT < note.start;
-    if (leftOut || rightOut) {
+    if (isOutOfScreen(note.start, effectiveEnd)) {
         return;
     }
 
@@ -116,11 +116,68 @@ void View::draw(const Note& note) {
     int screenY = noteY(note.pitch);
     SDL_Rect r {
         screenL,
-        screenY,
+        screenY + NOTE_BORDER_WIDTH,
         screenR - screenL,
+        static_cast<int>(screenH) - 2*NOTE_BORDER_WIDTH
+    };
+    SDL_RenderFillRect(renderer, &r);
+}
+
+void View::drawHollow(const Note& note) {
+    // Check if note is out of screen
+    auto effectiveEnd = note.end == 0 ? t : note.end;
+    if (isOutOfScreen(note.start, effectiveEnd)) {
+        return;
+    }
+
+    int screenL = std::max(0, screenX(note.start));
+    int screenR = std::min(screenX(effectiveEnd), static_cast<int>(width));
+    float screenH = noteH();
+    int screenY = noteY(note.pitch);
+
+    // Draw left bar
+    {
+    SDL_Rect r {
+        screenL,
+        screenY,
+        NOTE_BORDER_WIDTH,
         static_cast<int>(screenH)
     };
     SDL_RenderFillRect(renderer, &r);
+    }
+
+    // Draw right bar
+    {
+    SDL_Rect r {
+        screenR - NOTE_BORDER_WIDTH,
+        screenY,
+        NOTE_BORDER_WIDTH,
+        static_cast<int>(screenH)
+    };
+    SDL_RenderFillRect(renderer, &r);
+    }
+
+    // Draw top bar
+    {
+    SDL_Rect r {
+        screenL,
+        screenY,
+        screenR - screenL,
+        NOTE_BORDER_WIDTH,
+    };
+    SDL_RenderFillRect(renderer, &r);
+    }
+
+    // Draw bot bar
+    {
+    SDL_Rect r {
+        screenL,
+        screenY + static_cast<int>(screenH) - NOTE_BORDER_WIDTH,
+        screenR - screenL,
+        NOTE_BORDER_WIDTH,
+    };
+    SDL_RenderFillRect(renderer, &r);
+    }
 }
 
 void View::line(const Note& note) {
@@ -165,4 +222,10 @@ float View::noteH() {
 
 float View::noteY(float pitch) {
     return (1 - (pitch - minPitch) / (maxPitch - minPitch)) * (height - noteH());
+}
+
+bool View::isOutOfScreen(float start, float end) const {
+    bool leftOut = end < leftT;
+    bool rightOut = rightT < start;
+    return leftOut || rightOut;
 }
