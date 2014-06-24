@@ -37,6 +37,9 @@ void updateBeatTime(float s) {
     // Update beat time
     int dWallT = wallT - lastWallT;
     beatT += s * dWallT * beatsPerMs;
+    if (beatT < 0) {
+        beatT = 0;
+    }
 
     lastWallT = wallT;
 }
