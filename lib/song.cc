@@ -17,12 +17,11 @@ std::vector<Note> loadSong(const char* path) {
             switch (event->get_type()) {
                 case 'n':
                     {
-                        Note n {
-                            static_cast<int>(event->get_identifier()),
-                            static_cast<int>(event->get_loud()),
-                            static_cast<float>(event->get_start_time()),
-                            static_cast<float>(event->get_end_time())
-                        };
+                        Note n;
+                        n.pitch = event->get_identifier();
+                        n.velocity = event->get_loud();
+                        n.start = event->get_start_time();
+                        n.end = event->get_end_time();
                         notes.push_back(n);
                     }
                     break;
