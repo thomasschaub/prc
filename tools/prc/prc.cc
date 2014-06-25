@@ -4,6 +4,7 @@
 
 #include <SDL2/SDL.h>
 
+#include "cli.h"
 #include "note.h"
 #include "midi.h"
 #include "song.h"
@@ -16,18 +17,6 @@ enum PlaybackState {
     SEEK_L,
     SEEK_R
 };
-
-void printMidiDevices() {
-    int n = Pm_CountDevices();
-    for (int i = 0; i < n; ++i) {
-        const PmDeviceInfo* info = Pm_GetDeviceInfo(i);
-        std::cout << i << ": " << info->name;
-        if (info->input) {
-            std::cout << " (input)";
-        }
-        std::cout << std::endl;
-    }
-}
 
 PmStream* getInputStream(PmDeviceID id) {
     const PmDeviceInfo* info = Pm_GetDeviceInfo(id);
@@ -50,15 +39,47 @@ PmStream* getOutputStream(PmDeviceID id) {
 }
 
 int main(int argc, const char* argv[]) {
-    if (argc != 2) {
+    // Read CLI args
+    CliArgs args = readCliArgs(argc, argv);
+    if (args.songPath == nullptr) {
         std::cerr << "Usage: " << argv[0] << " <midi>" << std::endl;
         return 1;
     }
 
-    const char* songPath = argv[1];
-    PmDeviceID inputDevice = 5;
-    PmDeviceID outputDevice = 6;
+    Pm_Initialize();
+    listDevices();
 
+    // Open Piano Input
+    PmStream* pianoStream = nullptr;
+    if (args.inputDevice != -1) {
+        pianoStream = getInputStream(args.inputDevice);
+    }
+    while (pianoStream == nullptr) {
+        if (args.inputDevice != -1) {
+            std::cerr << "Could not open input device" << std::endl;
+        }
+
+        std::cout << "Enter input device ID: " << std::flush;
+        std::cin >> args.inputDevice;
+        pianoStream = getInputStream(args.inputDevice);
+    }
+
+    // Open output
+    PmStream* outputStream = nullptr;
+    if (args.outputDevice != -1) {
+        outputStream = getOutputStream(args.outputDevice);
+    }
+    while (outputStream == nullptr) {
+        if (args.outputDevice != -1) {
+            std::cerr << "Could not open output device" << std::endl;
+        }
+
+        std::cout << "Enter output device ID: " << std::flush;
+        std::cin >> args.outputDevice;
+        outputStream = getOutputStream(args.outputDevice);
+    }
+
+    // Init SDL
     SDL_Init(SDL_INIT_VIDEO);
     SDL_LogSetAllPriority(SDL_LOG_PRIORITY_DEBUG);
 
@@ -69,17 +90,9 @@ int main(int argc, const char* argv[]) {
     }
     std::vector<Note> playedNotes;
 
-    // Open user input
-    Pm_Initialize();
-    printMidiDevices();
-    PmStream* stream = getInputStream(inputDevice);
-
     // Open song
-    std::vector<Note> song = loadSong(songPath);
+    std::vector<Note> song = loadSong(args.songPath);
     setBpm(96);
-
-    // Open output
-    PmStream* outputStream = getOutputStream(outputDevice);
 
     // Create output
     SDL_Window* window;
@@ -226,7 +239,7 @@ int main(int argc, const char* argv[]) {
 
         // Read and replay piano input
         NoteEvent noteEvents[8];
-        int n = getNoteEvent(stream, noteEvents, 8);
+        int n = getNoteEvent(pianoStream, noteEvents, 8);
         for (int i = 0; i < n; ++i) {
             putNoteEvent(outputStream, noteEvents[i]);
             const NoteEvent& e = noteEvents[i];
@@ -256,7 +269,7 @@ int main(int argc, const char* argv[]) {
     putAllOff(outputStream, 0);
     putAllOff(outputStream, 1);
 
-    Pm_Close(stream);
+    Pm_Close(pianoStream);
     Pm_Close(outputStream);
     Pm_Terminate();
 }
