@@ -6,7 +6,9 @@ Piano Rollercoaster is SingStar for playing Piano.
 
 Start your Piano Rollercoaster ride with
 
+```
 $ prc song.mid
+```
 
 and play along!
 
@@ -24,4 +26,6 @@ Install the following Ubuntu packages:
 
 Compile with
 
+```
 $ make
+```
