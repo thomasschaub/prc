@@ -140,6 +140,9 @@ int main(int argc, const char* argv[]) {
                 case SDLK_0:
                     resetBeatTime();
                     playedNotes.clear();
+                    for (int i = 0; i < 128; ++i) {
+                        expectedNotes[i] = false;
+                    }
                     putAllOff(outputStream, 0);
                     putAllOff(outputStream, 1);
                     break;
