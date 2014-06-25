@@ -51,9 +51,9 @@ void View::background() {
 
     // Draw lines of the staff
 
-    const int C_INTENSITY = 225;
-    const int IVORY_INTENSITY = 210;
-    const int EBONY_INTENSITY = 70;
+    const int IVORY_INTENSITY = 100;
+    const int C_INTENSITY = IVORY_INTENSITY + 20;
+    const int EBONY_INTENSITY = 60;
 
     float h = noteH();
     for (int i = maxPitch - minPitch; i >= 0; --i) {
