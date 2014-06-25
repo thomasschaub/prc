@@ -7,6 +7,7 @@ struct CliArgs {
     const char* songPath = nullptr;
     PmDeviceID inputDevice = -1;
     PmDeviceID outputDevice = -1;
+    bool fullscreen = false;
 };
 
 void listDevices();

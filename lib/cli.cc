@@ -37,6 +37,9 @@ CliArgs readCliArgs(int argc, const char* argv[]) {
             }
             ret.outputDevice = atoi(argv[++i]);
         }
+        else if (arg == "-f") {
+            ret.fullscreen = true;
+        }
         else {
             ret.songPath = argv[i];
         }

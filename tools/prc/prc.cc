@@ -97,7 +97,11 @@ int main(int argc, const char* argv[]) {
     // Create output
     SDL_Window* window;
     SDL_Renderer* renderer;
-    SDL_CreateWindowAndRenderer(800, 600, 0, &window, &renderer);
+    Uint32 windowFlags = 0;
+    if (args.fullscreen) {
+        windowFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+    }
+    SDL_CreateWindowAndRenderer(800, 600, windowFlags, &window, &renderer);
     View view(renderer);
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
