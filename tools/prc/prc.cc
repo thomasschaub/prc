@@ -233,24 +233,28 @@ int main(int argc, const char* argv[]) {
             bool off = (lastBeatTime < note.end && note.end <= beatTime())
                 || (beatTime() < note.start && note.start <= lastBeatTime);
             if (on) {
-                NoteEvent e {
-                    1,
-                    static_cast<unsigned char>(note.pitch),
-                    static_cast<unsigned char>(note.velocity),
-                    ON
-                };
-                putNoteEvent(outputStream, e);
+                if (args.mode == Mode_Play) {
+                    NoteEvent e {
+                        1,
+                            static_cast<unsigned char>(note.pitch),
+                            static_cast<unsigned char>(note.velocity),
+                            ON
+                    };
+                    putNoteEvent(outputStream, e);
+                }
 
                 expectedNotes[note.pitch] = true;
             }
             if (off) {
-                NoteEvent e {
-                    1,
-                    static_cast<unsigned char>(note.pitch),
-                    static_cast<unsigned char>(note.velocity),
-                    OFF
-                };
-                putNoteEvent(outputStream, e);
+                if (args.mode == Mode_Play) {
+                    NoteEvent e {
+                        1,
+                            static_cast<unsigned char>(note.pitch),
+                            static_cast<unsigned char>(note.velocity),
+                            OFF
+                    };
+                    putNoteEvent(outputStream, e);
+                }
 
                 expectedNotes[note.pitch] = false;
             }
