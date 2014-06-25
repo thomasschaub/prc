@@ -101,6 +101,13 @@ void View::background() {
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderDrawLine(renderer, 0, y, width, y);
     }
+
+    // Draw bars
+    int barLength = width / dt;
+    float firstBarT = ceil(leftT);
+    for (int x = screenX(firstBarT); x < width; x += barLength) {
+        SDL_RenderDrawLine(renderer, x, 0, x, height);
+    }
 }
 
 void View::draw(const Note& note) {
