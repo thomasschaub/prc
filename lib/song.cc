@@ -1,5 +1,6 @@
 #include "song.h"
 
+#include <algorithm>
 #include <cstring>
 
 #include <portSMF/allegro.h>
@@ -31,5 +32,6 @@ std::vector<Note> loadSong(const char* path) {
         }
     }
 
+    std::sort(notes.begin(), notes.end());
     return notes;
 }

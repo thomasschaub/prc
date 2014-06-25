@@ -2,6 +2,8 @@
 #define NOTE_H__
 
 struct Note {
+    bool operator<(const Note& rhs) const;
+
     void reset();
 
     int pitch = 0, velocity = 0;
