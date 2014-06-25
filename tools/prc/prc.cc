@@ -203,7 +203,7 @@ int main(int argc, const char* argv[]) {
             bool active = activeNotes[i].start != -1;
             bool expected = expectedNotes[i];
 
-            if (active != expected) {
+            if (!active && expected) {
                 allCorrect = false;
                 break;
             }
