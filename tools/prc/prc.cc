@@ -94,6 +94,12 @@ int main(int argc, const char* argv[]) {
     std::vector<Note> song = loadSong(args.songPath);
     setBpm(96);
 
+    // Maintain expected notes for training mode
+    std::array<bool, 128> expectedNotes;
+    for (int i = 0; i < 128; ++i) {
+        expectedNotes[i] = false;
+    }
+
     // Create output
     SDL_Window* window;
     SDL_Renderer* renderer;
@@ -188,9 +194,26 @@ int main(int argc, const char* argv[]) {
             break;
         }
 
+        bool allCorrect = true;
+        // If training is enabled, only forward time when the right notes are played
+        for (int i = 0; i < 128; ++i) {
+            bool active = activeNotes[i].start != -1;
+            bool expected = expectedNotes[i];
+
+            if (active != expected) {
+                allCorrect = false;
+                break;
+            }
+        }
+
         // Update time
         auto lastBeatTime = beatTime();
-        updateBeatTime(playbackSpeed);
+        if (args.mode == Mode_Training && playbackState == PLAY && !allCorrect) {
+            updateBeatTime(0);
+        }
+        else {
+            updateBeatTime(playbackSpeed);
+        }
         int frameStart = wallTime(nullptr);
 
 
@@ -214,6 +237,8 @@ int main(int argc, const char* argv[]) {
                     ON
                 };
                 putNoteEvent(outputStream, e);
+
+                expectedNotes[note.pitch] = true;
             }
             if (off) {
                 NoteEvent e {
@@ -223,6 +248,8 @@ int main(int argc, const char* argv[]) {
                     OFF
                 };
                 putNoteEvent(outputStream, e);
+
+                expectedNotes[note.pitch] = false;
             }
             view.drawHollow(note);
         }

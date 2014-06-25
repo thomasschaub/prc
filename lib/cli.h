@@ -3,11 +3,19 @@
 
 #include <portmidi.h>
 
+enum Mode {
+    Mode_Play,
+    Mode_Training
+};
+
 struct CliArgs {
     const char* songPath = nullptr;
     PmDeviceID inputDevice = -1;
     PmDeviceID outputDevice = -1;
+
     bool fullscreen = false;
+
+    Mode mode = Mode_Training;
 };
 
 void listDevices();
