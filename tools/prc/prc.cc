@@ -18,6 +18,12 @@ enum PlaybackState {
     SEEK_R
 };
 
+enum TrainingState {
+    TrainingState_Off,     // It is wrong to play this note
+    TrainingState_On,      // Playing this note is ok, but not required
+    TrainingState_Expected // This note needs to be played to progress
+};
+
 PmStream* getInputStream(PmDeviceID id) {
     const PmDeviceInfo* info = Pm_GetDeviceInfo(id);
     std::cout << info->name << " " << info->input << std::endl;
@@ -95,10 +101,7 @@ int main(int argc, const char* argv[]) {
     setBpm(96);
 
     // Maintain expected notes for training mode
-    std::array<bool, 128> expectedNotes;
-    for (int i = 0; i < 128; ++i) {
-        expectedNotes[i] = false;
-    }
+    std::array<TrainingState, 128> trainingStates;
 
     // Create output
     SDL_Window* window;
@@ -141,7 +144,7 @@ int main(int argc, const char* argv[]) {
                     resetBeatTime();
                     playedNotes.clear();
                     for (int i = 0; i < 128; ++i) {
-                        expectedNotes[i] = false;
+                        trainingStates[i] = TrainingState_Off;
                     }
                     putAllOff(outputStream, 0);
                     putAllOff(outputStream, 1);
@@ -201,11 +204,27 @@ int main(int argc, const char* argv[]) {
         // If training is enabled, only forward time when the right notes are played
         for (int i = 0; i < 128; ++i) {
             bool active = activeNotes[i].start != -1;
-            bool expected = expectedNotes[i];
+            TrainingState trainingState = trainingStates[i];
 
-            if (!active && expected) {
-                allCorrect = false;
-                break;
+            switch (trainingState) {
+                case TrainingState_On:
+                    // Note has already been played, user may have stopped a
+                    // little to early, no problem.
+                    break;
+                case TrainingState_Off:
+                    // Note must not be played
+                    if (active) {
+                        allCorrect = false;
+                    }
+                    break;
+                case TrainingState_Expected:
+                    // Note must be played
+                    if (!active) {
+                        allCorrect = false;
+                    }
+                    else {
+                        trainingStates[i] = TrainingState_On;
+                    }
             }
         }
 
@@ -243,7 +262,7 @@ int main(int argc, const char* argv[]) {
                     putNoteEvent(outputStream, e);
                 }
 
-                expectedNotes[note.pitch] = true;
+                trainingStates[note.pitch] = TrainingState_Expected;
             }
             if (off) {
                 if (args.mode == Mode_Play) {
@@ -256,7 +275,7 @@ int main(int argc, const char* argv[]) {
                     putNoteEvent(outputStream, e);
                 }
 
-                expectedNotes[note.pitch] = false;
+                trainingStates[note.pitch] = TrainingState_Off;
             }
             view.drawHollow(note);
         }
