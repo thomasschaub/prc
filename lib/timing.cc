@@ -21,8 +21,8 @@ float beatTime() {
     return beatT;
 }
 
-void resetBeatTime() {
-    beatT = 0;
+void resetBeatTime(float t) {
+    beatT = t;
 }
 
 void seek(float beats) {

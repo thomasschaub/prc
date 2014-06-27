@@ -8,7 +8,7 @@ void setBpm(float bpm);
  */
 float beatTime();
 
-void resetBeatTime();
+void resetBeatTime(float t);
 void seek(float beats);
 
 /**

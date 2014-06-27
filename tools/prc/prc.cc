@@ -18,12 +18,6 @@ enum PlaybackState {
     SEEK_R
 };
 
-enum TrainingState {
-    TrainingState_Off,     // It is wrong to play this note
-    TrainingState_On,      // Playing this note is ok, but not required
-    TrainingState_Expected // This note needs to be played to progress
-};
-
 PmStream* getInputStream(PmDeviceID id) {
     const PmDeviceInfo* info = Pm_GetDeviceInfo(id);
     std::cout << info->name << " " << info->input << std::endl;
@@ -100,8 +94,8 @@ int main(int argc, const char* argv[]) {
     std::vector<Note> song = loadSong(args.songPath);
     setBpm(96);
 
-    // Maintain expected notes for training mode
-    std::array<TrainingState, 128> trainingStates;
+    // Maintain expected notes for practice mode
+    int practiceNote = 0;
 
     // Create output
     SDL_Window* window;
@@ -141,11 +135,9 @@ int main(int argc, const char* argv[]) {
             case SDL_KEYDOWN:
                 switch (e.key.keysym.sym) {
                 case SDLK_0:
-                    resetBeatTime();
+                    resetBeatTime(0);
                     playedNotes.clear();
-                    for (int i = 0; i < 128; ++i) {
-                        trainingStates[i] = TrainingState_Off;
-                    }
+                    practiceNote = 0;
                     putAllOff(outputStream, 0);
                     putAllOff(outputStream, 1);
                     break;
@@ -200,44 +192,56 @@ int main(int argc, const char* argv[]) {
             break;
         }
 
-        bool allCorrect = true;
-        // If training is enabled, only forward time when the right notes are played
-        for (int i = 0; i < 128; ++i) {
-            bool active = activeNotes[i].start != -1;
-            TrainingState trainingState = trainingStates[i];
-
-            switch (trainingState) {
-                case TrainingState_On:
-                    // Note has already been played, user may have stopped a
-                    // little to early, no problem.
-                    break;
-                case TrainingState_Off:
-                    // Note must not be played
-                    if (active) {
-                        allCorrect = false;
-                    }
-                    break;
-                case TrainingState_Expected:
-                    // Note must be played
-                    if (!active) {
-                        allCorrect = false;
-                    }
-                    else {
-                        trainingStates[i] = TrainingState_On;
-                    }
-            }
-        }
-
         // Update time
         auto lastBeatTime = beatTime();
-        if (args.mode == Mode_Training && playbackState == PLAY && !allCorrect) {
-            updateBeatTime(0);
-        }
-        else {
-            updateBeatTime(playbackSpeed);
-        }
+        updateBeatTime(playbackSpeed);
         int frameStart = wallTime(nullptr);
 
+        // Check if all notes are played for practice mode
+        if (args.mode == Mode_Training) {
+            float practiceDelta = 0.1;
+
+            // Iterate batches of notes starting at the same time
+            bool allPlayed = true;
+            while (allPlayed) {
+                // Process next batch
+
+                // Compute the interval in which the note has to be played
+                float tMin = song[practiceNote].start - practiceDelta;
+                float tMax = song[practiceNote].start + practiceDelta;
+
+                // Cancel if this batch is too far in the future
+                if (beatTime() < tMin) {
+                    break;
+                }
+
+                unsigned i = practiceNote;
+                for (; i < song.size(); ++i) {
+                    auto& expected = song[i];
+
+                    // Stop if we left the current batch
+                    if (expected.start > song[practiceNote].start) {
+                        break;
+                    }
+
+                    // Check if the user currently plays ALL notes of this batch
+                    if (tMin <= beatTime() && lastBeatTime < tMax) {
+                        float t = activeNotes[expected.pitch].start;
+                        allPlayed = allPlayed && tMin <= t && t < tMax;
+                    }
+                }
+
+                if (allPlayed) {
+                    practiceNote = i;
+                }
+                else {
+                    // Check if we are leaving this batch and still haven't played all notes
+                    if (beatTime() > tMax) {
+                        resetBeatTime(lastBeatTime);
+                    }
+                }
+            }
+        }
 
         // Prepare view
         view.background();
@@ -261,8 +265,6 @@ int main(int argc, const char* argv[]) {
                     };
                     putNoteEvent(outputStream, e);
                 }
-
-                trainingStates[note.pitch] = TrainingState_Expected;
             }
             if (off) {
                 if (args.mode == Mode_Play) {
@@ -274,8 +276,6 @@ int main(int argc, const char* argv[]) {
                     };
                     putNoteEvent(outputStream, e);
                 }
-
-                trainingStates[note.pitch] = TrainingState_Off;
             }
             view.drawHollow(note);
         }
