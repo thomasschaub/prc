@@ -2,7 +2,7 @@
 
 Piano Rollercoaster is SingStar for playing Piano.
 
-![Piano Rollercoaster](https://raw.githubusercontent.com/thomasschaub/thomasschaub.github.io/master/prc.gif)
+![Piano Rollercoaster](https://raw.githubusercontent.com/thomasschaub/prc/master/docs/prc.gif)
 
 The video shows training mode, in which the song pauses until you play the right notes. Normal mode is not so considerate...
 
